@@ -49,7 +49,7 @@ mismaMadre(UnaPersona, OtraPersona):-
 medioHermanos(UnaPersona, OtraPersona):-
     mismoPadre(UnaPersona,OtraPersona),
     UnaPersona\=OtraPersona,
-    not(hermanos(UnaPersona, OtraPersona)).
+    not(hermanos(UnaPersona, OtraPersona)). %Para que sea un "Or" exclusivo
 medioHermanos(UnaPersona, OtraPersona):-
     mismaMadre(UnaPersona, OtraPersona),
     UnaPersona\=OtraPersona,
