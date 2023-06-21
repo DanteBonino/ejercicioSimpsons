@@ -27,10 +27,7 @@ madreDe(selma, ling).
 
 %tieneHijo/1
 tieneHijo(UnaPersona):-
-    padreDe(UnaPersona,_).
-    
-tieneHijo(UnaPersona):-
-    madreDe(UnaPersona,_).
+    progenitor(UnaPersona,_).
 
 %hermanos/2
 hermanos(UnaPersona,OtraPersona):-
@@ -44,6 +41,13 @@ mismoPadre(UnaPersona, OtraPersona):-
 mismaMadre(UnaPersona, OtraPersona):-
     madreDe(UnaMadre, UnaPersona),
     madreDe(UnaMadre, OtraPersona).
+mismoProgenitor(UnaPersona, OtraPersona):-
+    progenitor(UnPadre, UnaPersona),
+    progenitor(UnPadre, OtraPersona).
+
+hermanosV2(UnaPersona, OtraPersona):-%Creo que esta no funciona bien para diferenciar e/ medioHermanos y Hermanos pq con que tengan u
+    mismoProgenitor(UnaPersona, OtraPersona),
+    UnaPersona\=OtraPersona.
 
 %medioHermanos/2
 medioHermanos(UnaPersona, OtraPersona):-
@@ -54,6 +58,11 @@ medioHermanos(UnaPersona, OtraPersona):-
     mismaMadre(UnaPersona, OtraPersona),
     UnaPersona\=OtraPersona,
     not(hermanos(UnaPersona, OtraPersona)).
+
+medioHermanos(UnaPersona, OtraPersona):-%Esta sí funciona
+    mismoProgenitor(UnaPersona, OtraPersona),
+    UnaPersona\=OtraPersona,
+    not(hermanos(UnaPersona,OtraPersona)).
 
 %tioDe/2
 tioDe(UnaPersona, OtraPersona):-
@@ -69,6 +78,14 @@ tioDe(UnaPersona, OtraPersona):-
     madreDe(UnaMadre, OtraPersona),
     concuniado(UnaMadre, UnaPersona).
 
+%Tio V2: Funciona Perfecto
+tioDeV2(UnaPersona, OtraPersona):-
+    hermanos(UnaPersona, Hermano),
+    progenitor(Hermano, OtraPersona).
+tioDeV2(UnaPersona, OtraPersona):-
+    progenitor(UnPadre, OtraPersona),
+    concuniado(UnPadre, UnaPersona).
+
 parejaDe(UnaPersona, OtraPersona):-
     padreDe(UnaPersona, UnHijo),
     madreDe(OtraPersona, UnHijo).
@@ -76,11 +93,22 @@ parejaDe(UnaPersona, OtraPersona):-
     madreDe(UnaPersona, UnHijo),
     padreDe(OtraPersona, UnHijo).
 
+%parejaDeV2: Funciona
+parejaDeV2(UnaPersona,OtraPersona):-
+    progenitor(UnaPersona, Hijo),
+    progenitor(OtraPersona, Hijo),
+    UnaPersona\=OtraPersona.
+
 concuniado(UnaPersona, OtraPersona):-
     hermanos(UnaPersona,Hermano),
     parejaDe(OtraPersona, Hermano).
 
 %abueloMultiple:
+abueloMultiple(UnaPersona):-
+    progenitor(UnaPersona, Hijo),
+    progenitor(Hijo, Nieto1),
+    progenitor(Hijo, Nieto2),
+    Nieto1 \= Nieto2.   
 
 %cuñados (Si es el hermano o hermana de tu pareja o si es la pareja de tu hermano/hermana)
 cuniados(UnaPersona, OtraPersona):-
@@ -94,10 +122,7 @@ suegros(UnaPersona, OtraPersona):-
 
 %consuegros:
 consuegros(UnaPersona, OtraPersona):-
-    padreDe(UnaPersona, UnHijo),
-    suegros(OtraPersona, UnHijo).
-consuegros(UnaPersona, OtraPersona):-
-    madreDe(UnaPersona, UnHijo),
+    progenitor(UnaPersona, UnHijo),
     suegros(OtraPersona, UnHijo).
 
 %yerno
@@ -111,32 +136,28 @@ nuera(UnaPersona, OtraPersona):-
     madreDe(UnaPersona,_).
 
 parejaDeUnHijo(UnaPersona,OtraPersona):-
-    padreDe(OtraPersona, UnaHija),
+    progenitor(OtraPersona, UnaHija),
     parejaDe(UnaHija, UnaPersona).
-parejaDeUnHijo(UnaPersona,OtraPersona):-
-    madreDe(OtraPersona, UnaHija),
-    parejaDe(UnaHija, UnaPersona).
+
 
 %primos
 primos(UnaPersona, OtraPersona):-
     tioDe(UnTio, UnaPersona),
-    padreDe(UnTio, OtraPersona).
-primos(UnaPersona, OtraPersona):-
-    tioDe(UnTio, UnaPersona),
-    madreDe(UnTio, OtraPersona).
+    progenitor(UnTio, OtraPersona).
+
 
 %descendiente
 descendiente(UnaPersona, PosibleDescendiente):-
-    padreDe(UnaPersona, PosibleDescendiente).
+    progenitor(UnaPersona, PosibleDescendiente).
 
 descendiente(UnaPersona, PosibleDescendiente):-
-    madreDe(UnaPersona, PosibleDescendiente).
-
-descendiente(UnaPersona, PosibleDescendiente):-
-    padreDe(UnaPersona, HijoDeUnaPersona),
+    progenitor(UnaPersona, HijoDeUnaPersona),
     descendiente(HijoDeUnaPersona, PosibleDescendiente).
 
-descendiente(UnaPersona, PosibleDescendiente):-
-    madreDe(UnaPersona, HijoDeUnaPersona),
-    descendiente(HijoDeUnaPersona, PosibleDescendiente).
+progenitor(UnaPersona, OtraPersona):-
+    padreDe(UnaPersona, OtraPersona).
+progenitor(UnaPersona, OtraPersona):-
+    madreDe(UnaPersona, OtraPersona).
+
+
 
