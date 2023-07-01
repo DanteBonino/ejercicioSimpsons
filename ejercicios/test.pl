@@ -161,3 +161,81 @@ progenitor(UnaPersona, OtraPersona):-
 
 
 
+nacio(karla, fecha(22, 08, 1979)).
+nacio(sergio, fecha(14, 10, 1986)).
+
+% natacion: estilos (lista), metros nadados, medallas
+practica(ana, natacion([pecho, crawl], 1200, 10)).
+practica(luis, natacion([perrito], 200, 0)).
+practica(vicky, 
+   natacion([crawl, mariposa, pecho, espalda], 800, 0)).
+% fútbol: medallas, goles marcados, veces que fue expulsado
+practica(deby, futbol(2, 15, 5)).
+practica(mati, futbol(1, 11, 7)).
+% rugby: posición que ocupa, medallas
+practica(zaffa, rugby(pilar, 0)).
+
+nadadores(UnaPersona):-
+    practica(UnaPersona, UnDeporte),
+    nadador(UnDeporte).
+
+nadador(natacion(_,_,_)).
+
+medallasObtenidas(UnaPersona, Medallas):-
+    practica(UnaPersona, UnDeporte),
+    cuantasMedallas(UnDeporte, Medallas).
+
+cuantasMedallas(natacion(_, _, Medallas), Medallas).
+cuantasMedallas(futbol(Medallas, _, _), Medallas).
+cuantasMedallas(rugby(_, Medallas), Medallas).
+
+buenDeportista(UnaPersona):-
+    practica(UnaPersona, UnDeporte),
+    esBueno(UnDeporte).
+
+esBueno(natacion(Estilos, _, _)):-
+    length(Estilos, CantidadEstilos),
+    CantidadEstilos > 3.
+esBueno(natacion(_, Kms, _)):-
+    Kms > 1000.
+esBueno(futbol(_, Goles, Expulsiones)):-
+    Valor is Goles - Expulsiones,
+    Valor > 5.
+esBueno(rugby(pilar, _)).
+esBueno(rugby(wing, _)).
+
+vieneCon(p206, abs).
+vieneCon(p206, levantavidrios).
+vieneCon(p206, direccionAsistida).
+vieneCon(kadisco, abs).
+vieneCon(kadisco, mp3).
+vieneCon(kadisco, tacometro).
+
+quiere(carlos, abs).
+quiere(carlos, mp3).
+quiere(roque, abs).
+quiere(roque, direccionAsistida).
+
+
+leVienePerfecto(Auto, Persona):-
+    persona(Persona),
+    auto(Auto), 
+    forall(quiere(Persona, Caracteristica), 
+           vieneCon(Auto, Caracteristica)).
+
+persona(UnaPersona):-
+    quiere(UnaPersona,_).
+auto(UnAuto):-
+    vieneCon(UnAuto,_).
+
+incluido(A, B):-forall(member(X, A), member(X, B)).
+
+ancestro(Padre, Persona):-padre(Padre, Persona).
+ancestro(Ancestro, Persona):-
+    padre(Padre, Persona),
+    ancestro(Ancestro, Padre).
+
+padre(tatara, bisa).
+padre(bisa, abu).
+padre(abu, padre).
+padre(padre, hijo).
