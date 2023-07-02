@@ -58,7 +58,7 @@ habla(juancho,arabe).
 habla(juancho,griego).
 habla(juancho,hebreo).
 habla(lucy,griego).
-habla(lucy,rumano).
+
 
 %CapitalActual:
 capital(pepe,1200).
@@ -71,8 +71,7 @@ destinoPosible(UnaPersona, UnaCiudad):-
     tarea(UnNivel, buscar(_, UnaCiudad)).
 
 idiomaUtil(UnNivel, UnIdioma):-
-    nivelActual(UnaPersona, UnNivel),
-    destinoPosible(UnaPersona, UnDestino),
+    tarea(UnNivel, buscar(_, UnDestino)),
     idioma(UnDestino, UnIdioma).
 
 %Punto 2:
@@ -96,18 +95,25 @@ estaViva(flor).
 %Punto 4:
 complicado(UnParticipante):-
     nivelActual(UnParticipante, UnNivel),
-    forall(idiomaUtil(UnNivel, UnIdioma), not(habla(UnParticipante, UnIdioma))).
-complicado(UnParticipante):-
-    nivelActual(UnParticipante, UnNivel),
-    UnNivel \= basico,
-    capitalMenorA(UnParticipante, 1500).
-complicado(UnParticipante):-
-    nivelActual(UnParticipante, basico),
-    capitalMenorA(UnParticipante, 500).
+    complicadoSegunNivel(UnParticipante, UnNivel).
+
+complicadoSegunNivel(UnParticipante, UnNivel):-
+    not(hablaIdiomaDelNivel(UnParticipante, UnNivel)).
+complicadoSegunNivel(UnParticipante, UnNivel):-
+    capitalParaNivel(UnNivel, UnCapital),
+    capitalMenorA(UnParticipante, UnCapital).
+
+capitalParaNivel(basico, 500).
+capitalParaNivel(UnNivel, 1500):-
+    UnNivel \= basico.
 
 capitalMenorA(UnParticipante, UnMonto):-
     capital(UnParticipante, CapitalActual),
     CapitalActual<UnMonto.
+
+hablaIdiomaDelNivel(UnParticipante, UnNivel):-
+    idiomaUtil(UnNivel, UnIdioma),
+    habla(UnParticipante, UnIdioma).
 
 %Punto 5:
 homogeneo(UnNivel):-
